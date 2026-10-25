@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Model Performance{% endblock %}
+{% block content %}
+<h3>Model Performance</h3>
+<p class="text-muted">Models were trained on {{ info.train_rows }} days and tested on the latest {{ info.test_rows }} days they had never seen.</p>
+<table class="table table-bordered w-auto">
+  <thead class="table-success"><tr><th>Model</th><th>MAE ↓</th><th>RMSE ↓</th><th>R² ↑</th><th>Selected</th></tr></thead>
+  {% for r in rows %}
+  <tr><td>{{ r.model_name }}</td><td>{{ r.mae }}</td><td>{{ r.rmse }}</td><td>{{ r.r2 }}</td>
+      <td>{% if r.is_selected %}✅ Best{% endif %}</td></tr>
+  {% endfor %}
+</table>
+<div class="small text-muted mb-4"><b>MAE</b> = average error in µg/m³ · <b>RMSE</b> = like MAE but punishes big mistakes · <b>R²</b> = how much variation the model explains (1 = perfect).</div>
+<div class="row">
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Error comparison</h5><canvas id="metricChart"></canvas></div></div></div>
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Feature importance (Random Forest)</h5><canvas id="importanceChart"></canvas></div></div></div>
+</div>
+{% endblock %}

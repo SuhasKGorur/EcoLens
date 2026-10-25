@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Add Reading{% endblock %}
+{% block content %}
+<h3>Add a New Daily Reading</h3>
+<p class="text-muted">The reading is saved in MySQL, checked for anomalies, and the next-day forecast on the dashboard is refreshed.</p>
+<form method="post" class="card card-body" style="max-width:420px">
+  <label class="form-label">Date</label>
+  <input type="date" name="date" class="form-control mb-3" required>
+  <label class="form-label">PM2.5 (µg/m³)</label>
+  <input type="number" step="0.1" min="1" max="1000" name="pm25" class="form-control mb-3" required>
+  <button class="btn btn-success">Save reading</button>
+</form>
+<p class="small text-muted mt-3">Tip: try a very high value (e.g. 220) to see anomaly detection in action.</p>
+{% endblock %}

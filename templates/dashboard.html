@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-3">Air Quality Dashboard <small class="text-muted fs-6">Bengaluru · PM2.5 (µg/m³)</small></h3>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card stat-card h-100"><div class="card-body">
+    <div class="text-muted small">Latest reading ({{ latest.date }})</div>
+    <div class="display-6">{{ latest.pm25 }}</div>
+    {% set cat = latest.pm25|aqi %}
+    <span class="badge bg-{{ cat[1] }}">{{ cat[0] }}</span>
+    {% if latest_is_anom %}<span class="badge bg-danger">⚠ Unusual</span>{% endif %}
+  </div></div></div>
+
+  <div class="col-md-3"><div class="card stat-card h-100 border-success"><div class="card-body">
+    <div class="text-muted small">Forecast for {{ forecast.date if forecast else '-' }}</div>
+    {% if forecast %}
+      <div class="display-6">{{ forecast.predicted_pm25 }}</div>
+      {% set fc = forecast.predicted_pm25|aqi %}
+      <span class="badge bg-{{ fc[1] }}">{{ fc[0] }}</span>
+      <div class="small text-muted mt-1">by {{ model_name }}</div>
+    {% else %}<div>Not enough data</div>{% endif %}
+  </div></div></div>
+
+  <div class="col-md-3"><div class="card stat-card h-100"><div class="card-body">
+    <div class="text-muted small">Last 30 days</div>
+    <div class="fs-5">Avg <b>{{ stats.avg30 }}</b></div>
+    <div class="fs-5">Max <b>{{ stats.max30 }}</b></div>
+  </div></div></div>
+
+  <div class="col-md-3"><div class="card stat-card h-100"><div class="card-body">
+    <div class="text-muted small">Unusual readings flagged</div>
+    <div class="display-6">{{ n_anom }}</div>
+    <a href="/anomalies" class="small">Review them →</a>
+    <div class="small text-muted">Model R²: {{ metric.r2 }} · MAE: {{ metric.mae }}</div>
+  </div></div></div>
+</div>
+
+<div class="card mb-4"><div class="card-body">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h5 class="mb-0">Pollution trend</h5>
+    <select id="daysSelect" class="form-select form-select-sm w-auto">
+      <option value="30">Last 30 days</option>
+      <option value="90" selected>Last 90 days</option>
+      <option value="365">Last 365 days</option>
+    </select>
+  </div>
+  <canvas id="trendChart" height="90"></canvas>
+  <div class="small text-muted mt-1">Red dots = readings flagged as unusual by Isolation Forest.</div>
+</div></div>
+
+<div class="card"><div class="card-body">
+  <h5>Prediction history: predicted vs actual ({{ model_name }})</h5>
+  <canvas id="predChart" height="90"></canvas>
+</div></div>
+{% endblock %}
